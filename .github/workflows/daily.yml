@@ -1,0 +1,53 @@
+name: Daily Flutter Projects Generator
+
+on:
+  schedule:
+    # 7 AM Pakistan Time (PKT = UTC+5)  ->  02:00 UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      count:
+        description: "How many projects to generate this run"
+        required: false
+        default: "2"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: flutter-forge-daily
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install --upgrade anthropic
+
+      - name: Generate daily Flutter projects
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PROJECTS_PER_RUN: ${{ github.event.inputs.count || '2' }}
+        run: python scripts/generate.py
+
+      - name: Commit and push generated projects
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            DATE=$(date -u +"%Y-%m-%d")
+            git commit -m "chore(daily): add Flutter projects for $DATE"
+            git push
+          fi
