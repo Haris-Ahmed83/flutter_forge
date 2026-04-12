@@ -1,0 +1,7 @@
+name: profile_card_ui
+description: A Flutter project for Profile Card UI.
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
