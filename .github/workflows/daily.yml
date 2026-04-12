@@ -31,11 +31,11 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install --upgrade anthropic
+        run: pip install --upgrade google-genai
 
       - name: Generate daily Flutter projects
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           PROJECTS_PER_RUN: ${{ github.event.inputs.count || '2' }}
         run: python scripts/generate.py
 

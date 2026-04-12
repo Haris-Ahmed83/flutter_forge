@@ -1,7 +1,7 @@
 """
 ====================================================
   Flutter Forge - Daily Project Generator
-  Generates 2 Flutter projects per run using Claude AI.
+  Generates Flutter projects per run using Google Gemini AI.
   Writes into beginner/, intermediate/, advanced/ folders.
   Tracks progress in progress.json so no project is skipped.
   Author: HarisAhmed83
@@ -12,13 +12,15 @@ import json
 import os
 import re
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 
-import anthropic
+from google import genai
+from google.genai import types
 
-ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
-MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-5-20250929")
+GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
+MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-pro")
 PROJECTS_PER_RUN = int(os.environ.get("PROJECTS_PER_RUN", "2"))
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -38,9 +40,9 @@ def slugify(text: str) -> str:
     return s.strip("-")
 
 
-def strip_fences(text: str, lang_hint: str = "") -> str:
+def strip_fences(text: str) -> str:
     t = text.strip()
-    t = re.sub(rf"^```(?:{lang_hint}|[a-zA-Z]+)?\n?", "", t)
+    t = re.sub(r"^```[a-zA-Z]*\n?", "", t)
     t = re.sub(r"\n?```$", "", t.strip())
     return t.strip()
 
@@ -62,13 +64,25 @@ def save_progress(progress: dict):
     )
 
 
-def call_claude(client, prompt: str, max_tokens: int) -> str:
-    res = client.messages.create(
-        model=MODEL,
-        max_tokens=max_tokens,
-        messages=[{"role": "user", "content": prompt}],
-    )
-    return res.content[0].text
+def call_gemini(client, prompt: str, max_tokens: int, retries: int = 3) -> str:
+    last_err = None
+    for attempt in range(retries):
+        try:
+            res = client.models.generate_content(
+                model=MODEL,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    max_output_tokens=max_tokens,
+                    temperature=0.7,
+                ),
+            )
+            return res.text or ""
+        except Exception as e:
+            last_err = e
+            wait = 5 * (attempt + 1)
+            print(f"    WARN: Gemini call failed ({e}); retrying in {wait}s ...")
+            time.sleep(wait)
+    raise RuntimeError(f"Gemini call failed after {retries} retries: {last_err}")
 
 
 def generate_main_dart(client, project: dict, max_tokens: int) -> str:
@@ -78,19 +92,19 @@ def generate_main_dart(client, project: dict, max_tokens: int) -> str:
         f"Category: {project['category']}\n"
         f"Key Concepts: {project['concepts']}\n\n"
         f"STRICT REQUIREMENTS:\n"
-        f"1. Entire app in one main.dart — runnable with `flutter run`.\n"
+        f"1. Entire app in one main.dart that runs with `flutter run`.\n"
         f"2. Material 3 design (useMaterial3: true).\n"
-        f"3. Null safety, proper widget structure, const where possible.\n"
+        f"3. Null safety, clean widget structure, const where appropriate.\n"
         f"4. Clean, modern UI with good spacing, colors, and typography.\n"
         f"5. Must demonstrate the key concepts: {project['concepts']}.\n"
-        f"6. Brief inline comments on non-trivial logic only (no trivial comments).\n"
-        f"7. Reasonable default data if the project needs sample content.\n"
-        f"8. If the project requires external APIs/SDKs (Firebase, Google Maps, etc.), "
-        f"   write the UI + logic with clearly commented TODO hooks for credentials — "
-        f"   do NOT put real secrets. The app should still compile.\n\n"
-        f"Return ONLY raw Dart code. No markdown. No backticks. No prose."
+        f"6. Brief inline comments on non-trivial logic only.\n"
+        f"7. Reasonable default/sample data if the project needs content.\n"
+        f"8. If the project requires external SDKs (Firebase, Google Maps, etc.), "
+        f"   include the UI and logic with clearly commented TODO hooks for credentials. "
+        f"   Never include real secrets. The app must still compile.\n\n"
+        f"Return ONLY raw Dart code. No markdown fences. No prose."
     )
-    return strip_fences(call_claude(client, prompt, max_tokens), "dart")
+    return strip_fences(call_gemini(client, prompt, max_tokens))
 
 
 def generate_pubspec(client, project: dict, package_name: str) -> str:
@@ -101,14 +115,14 @@ def generate_pubspec(client, project: dict, package_name: str) -> str:
         f"Category: {project['category']}\n"
         f"Key Concepts: {project['concepts']}\n\n"
         f"RULES:\n"
-        f"- Use environment sdk: '>=3.3.0 <4.0.0', flutter: '>=3.19.0'.\n"
-        f"- Include ONLY the dependencies actually needed for the key concepts.\n"
+        f"- environment sdk: '>=3.3.0 <4.0.0', flutter: '>=3.19.0'.\n"
+        f"- Include ONLY dependencies required for the key concepts.\n"
         f"- Use current stable versions.\n"
         f"- Include flutter: uses-material-design: true.\n"
-        f"- NO comments except the description line.\n\n"
+        f"- No comments except the description line.\n\n"
         f"Return ONLY raw YAML. No markdown. No backticks."
     )
-    return strip_fences(call_claude(client, prompt, 1200), "yaml")
+    return strip_fences(call_gemini(client, prompt, 1500))
 
 
 def generate_readme(client, project: dict) -> str:
@@ -117,20 +131,20 @@ def generate_readme(client, project: dict) -> str:
         f"Project #{project['number']}: {project['name']}\n"
         f"Category: {project['category'].capitalize()}\n"
         f"Key Concepts: {project['concepts']}\n\n"
-        f"Sections (in this order):\n"
+        f"Sections in this order:\n"
         f"# Title with a single relevant emoji\n"
-        f"> 1-line tagline\n\n"
+        f"> one-line tagline\n\n"
         f"## Description (2-3 sentences)\n"
         f"## Features (5-7 bullets)\n"
         f"## Key Concepts Demonstrated (bullets mapping to: {project['concepts']})\n"
         f"## Getting Started (flutter pub get, flutter run)\n"
         f"## Screenshots (placeholder note)\n"
         f"## Author\n"
-        f"- HarisAhmed83 — https://github.com/Haris-Ahmed83\n\n"
+        f"- HarisAhmed83 - https://github.com/Haris-Ahmed83\n\n"
         f"Part of the [flutter_forge](https://github.com/Haris-Ahmed83/flutter_forge) series.\n\n"
-        f"Return ONLY markdown. No backticks wrapping."
+        f"Return ONLY markdown. No backticks wrapping the whole thing."
     )
-    return strip_fences(call_claude(client, prompt, 1500), "markdown")
+    return strip_fences(call_gemini(client, prompt, 2000))
 
 
 GITIGNORE_CONTENT = """# Flutter
@@ -183,8 +197,8 @@ def generate_project(client, project: dict) -> Path:
 
 
 def main():
-    if not ANTHROPIC_KEY:
-        print("ERROR: ANTHROPIC_API_KEY is not set.")
+    if not GEMINI_KEY:
+        print("ERROR: GEMINI_API_KEY is not set.")
         sys.exit(1)
 
     projects = load_projects()
@@ -197,7 +211,8 @@ def main():
         return
 
     print(f"Starting from project #{start}. Will generate {PROJECTS_PER_RUN} project(s) this run.")
-    client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+    print(f"Using model: {MODEL}")
+    client = genai.Client(api_key=GEMINI_KEY)
 
     generated_numbers = []
     for i in range(PROJECTS_PER_RUN):
@@ -206,7 +221,7 @@ def main():
             break
         project = next((p for p in projects if p["number"] == number), None)
         if project is None:
-            print(f"WARN: project #{number} not found in projects.json — stopping.")
+            print(f"WARN: project #{number} not found in projects.json - stopping.")
             break
         generate_project(client, project)
         generated_numbers.append(number)
