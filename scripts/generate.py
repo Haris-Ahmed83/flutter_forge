@@ -20,7 +20,7 @@ from google import genai
 from google.genai import types
 
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
-MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
 PROJECTS_PER_RUN = int(os.environ.get("PROJECTS_PER_RUN", "2"))
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
