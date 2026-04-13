@@ -1,0 +1,14 @@
+name: color_picker
+description: A beginner Flutter project to demonstrate GestureDetector and Color usage.
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
