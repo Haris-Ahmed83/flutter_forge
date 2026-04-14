@@ -1,0 +1,17 @@
+name: temperature_converter
+description: A beginner Flutter project for temperature conversion, focusing on input and logic.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

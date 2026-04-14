@@ -1,0 +1,7 @@
+name: quiz_app
+description: A beginner Flutter project demonstrating Conditional UI and Score management.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.
