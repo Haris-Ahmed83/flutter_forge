@@ -64,7 +64,9 @@ def save_progress(progress: dict):
     )
 
 
-def call_gemini(client, prompt: str, max_tokens: int, retries: int = 3) -> str:
+def call_gemini(client, prompt: str, max_tokens: int, retries: int = 6) -> str:
+    # Exponential backoff: 15s, 30s, 60s, 120s, 240s, 480s (total ~15 min worst case)
+    # Handles 503 UNAVAILABLE (Gemini overload) and 429 RESOURCE_EXHAUSTED robustly.
     last_err = None
     for attempt in range(retries):
         try:
@@ -79,8 +81,15 @@ def call_gemini(client, prompt: str, max_tokens: int, retries: int = 3) -> str:
             return res.text or ""
         except Exception as e:
             last_err = e
-            wait = 5 * (attempt + 1)
-            print(f"    WARN: Gemini call failed ({e}); retrying in {wait}s ...")
+            err_str = str(e)
+            is_transient = "503" in err_str or "UNAVAILABLE" in err_str or "429" in err_str or "500" in err_str
+            if not is_transient and attempt >= 2:
+                # Non-transient error and already retried twice — give up early
+                break
+            wait = 15 * (2 ** attempt)
+            wait = min(wait, 480)
+            print(f"    WARN: Gemini call failed (attempt {attempt + 1}/{retries}): {err_str[:200]}")
+            print(f"    Retrying in {wait}s ...")
             time.sleep(wait)
     raise RuntimeError(f"Gemini call failed after {retries} retries: {last_err}")
 
