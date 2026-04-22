@@ -1,0 +1,15 @@
+name: expense_tracker
+description: An intermediate Flutter project for expense tracking with CRUD operations and charts.
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  sqflite: ^2.3.2
+  path_provider: ^2.1.3
+  fl_chart: ^0.68.0
+
+flutter:
+  uses-material-design: true

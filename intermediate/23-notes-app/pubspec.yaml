@@ -1,0 +1,9 @@
+name: notes_app
+description: A new Flutter project for Notes App.
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
+
+dependencies
