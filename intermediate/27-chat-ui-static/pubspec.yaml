@@ -1,0 +1,19 @@
+name: chat_ui_static
+description: Project: Chat UI Static, Category: intermediate, Key Concepts: Bubble UI, alignment
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
