@@ -1,0 +1,16 @@
+name: crypto_price_tracker
+description: A Flutter app to track cryptocurrency prices.
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.1
+  web_socket_channel: ^2.4.0
+
+flutter:
+  uses-material-design: true
