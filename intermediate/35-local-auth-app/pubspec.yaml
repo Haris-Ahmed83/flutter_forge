@@ -1,0 +1,16 @@
+name: local_auth_app
+description: An intermediate Flutter app demonstrating biometric authentication using local_auth.
+
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  local_auth: ^2.2.0
+
+flutter:
+  uses-material-design: true
