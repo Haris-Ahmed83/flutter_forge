@@ -1,0 +1,8 @@
+name: e_commerce_ui
+description: A Flutter project for an E-Commerce User Interface.
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.
