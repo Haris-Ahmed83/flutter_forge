@@ -1,0 +1,7 @@
+name: full_auth_app
+description: An advanced Flutter app demonstrating Firebase Authentication with email/password and Google sign-in.
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter:
