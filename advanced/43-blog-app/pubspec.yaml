@@ -1,0 +1,26 @@
+name: blog_app
+description: Blog App
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  firebase_core: 2.25.4
+  cloud_firestore: 4.15.4
+  firebase_auth: 4.17.4
+  firebase_storage: 11.6.5
+  quill_html_editor: 2.2.0
+  image_picker: 1.0.7
+  intl: 0.18.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: 2.0.0
+
+flutter:
+  uses-material-design: true

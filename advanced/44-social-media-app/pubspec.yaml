@@ -1,0 +1,7 @@
+name: social_media_app
+description: A social media application with follow, feed, and like functionalities.
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3
