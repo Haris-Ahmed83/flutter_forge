@@ -1,0 +1,16 @@
+name: video_streaming_ui
+description: Video Streaming UI
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  video_player: ^2.8.1
+  chewie: ^1.8.0
+
+flutter:
+  uses-material-design: true

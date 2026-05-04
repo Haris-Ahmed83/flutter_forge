@@ -1,0 +1,7 @@
+name: ride_booking_app
+description: Ride Booking App - advanced project with Google Maps and real-time features.
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=
