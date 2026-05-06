@@ -1,0 +1,22 @@
+name: stock_market_app
+description: Stock Market App
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  fl_chart: 0.68.0
+  http: 1.2.1
+  web_socket_channel: 2.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
