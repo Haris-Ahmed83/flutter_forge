@@ -1,0 +1,7 @@
+name: language_learning_app
+description: A Flutter app for language learning with spaced repetition and audio features.
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '
