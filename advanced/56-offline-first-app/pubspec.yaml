@@ -1,0 +1,13 @@
+name: offline_first_app
+description: An advanced Offline-First App utilizing Hive for local storage and sync logic.
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  http: ^1.2.1
+  workmanager: ^0
