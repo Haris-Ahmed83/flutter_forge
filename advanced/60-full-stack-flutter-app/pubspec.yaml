@@ -1,0 +1,7 @@
+name: full_stack_flutter_app
+description: Full-Stack Flutter App
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'

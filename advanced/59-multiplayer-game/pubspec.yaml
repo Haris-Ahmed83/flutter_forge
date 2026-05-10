@@ -1,0 +1,11 @@
+name: multiplayer_game
+description: Multiplayer Game
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  web_
